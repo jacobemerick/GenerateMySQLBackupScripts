@@ -19,7 +19,11 @@ $database = new GenerateMySQLBackupScripts('root', 'Pa55word!');
 
 //One level deeper than your public_html
 //This is so the backups are not publicly accessible
-$dir = __DIR__.'/../backup/'.date('Y-m-d').'/';
+$dir = __DIR__ . '/../backup/';
+if (!is_dir($dir)) {
+    mkdir($dir);
+}
+$dir .= date('Y-m-d') . '/';
 if (!is_dir($dir)) {
     // if this doesn't exist, make it
     mkdir($dir);
@@ -32,6 +36,9 @@ foreach ($database->getDatabaseNames() as $singleDB) {
     }
     //generate a backup script and write the file to the server
     file_put_contents($dir.$singleDB . '-' . time() . '.sql', $database->generateBackupScript($singleDB));
+    
+    //generate a backup script and save directly to a file handle
+    //$database->writeBackupScriptToFile($singleDB, $dir . $singleDB . '-' . time() . '.sql');
 }
 
 
